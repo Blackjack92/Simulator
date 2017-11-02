@@ -20,7 +20,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 public class Main {
+	
+	private final static Logger log = Logger.getLogger(Main.class.getName());
+	
+	
 	static int etest = 0;
 	static int etest2 = 0;
 	static int etest3 = 0;
@@ -29,20 +38,20 @@ public class Main {
 
 	public static void main(String[] args) throws Throwable {
 
+		log.setLevel(Level.ALL);
+		log.log(Level.INFO, "Program starting...");
 		slider();
-
+		log.log(Level.INFO, "Program finished...");
 	}
-
+	
 	public static void gripperclose() {
 
-		System.out.println("Program started");
-		
 		remoteApi vrep = new remoteApi();
 		vrep.simxFinish(-1); // just in case, close all opened connections
-		
-		int clientID = vrep.simxStart("127.0.0.1", 19999, true, true, 5000, 5);
+		Config config = Config.getLocalhostConfig();
+		int clientID = vrep.simxStart(config.getIp(), config.getPort(), true, true, 5000, 5);
 		if (clientID != -1) {
-			System.out.println("Connected to remote API server");
+			log.log(Level.INFO, "Connected to remote API server");
 
 			// 1. First send a command to display a specific message in a dialog box:
 			StringWA inStrings = new StringWA(1);
@@ -59,6 +68,8 @@ public class Main {
 				System.out.format("Remote function call failed\n");
 			}
 
+		} else {
+			log.log(Level.SEVERE, "No connection to remote server possible: " + config);
 		}
 	}
 
@@ -97,7 +108,7 @@ public class Main {
 
 			System.out.println("Connected to remote API server");
 			IntW sensor = new IntW(0);
-			;
+			
 			int ret = vrep.simxGetObjectHandle(clientID, "Proximity_sensor", sensor, vrep.simx_opmode_blocking);
 			BoolW detState = new BoolW(false);
 			FloatWA detectedPoint = new FloatWA(0);

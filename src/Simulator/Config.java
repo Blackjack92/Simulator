@@ -27,4 +27,9 @@ public class Config {
 	public int getPort() {
 		return this.port;
 	}
+	
+	@Override
+	public String toString() {
+		return "IP: " + ip + "\t Port: " + port;
+	}
 }
