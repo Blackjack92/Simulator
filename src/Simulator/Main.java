@@ -7,7 +7,6 @@ import coppelia.IntWA;
 import coppelia.StringWA;
 import coppelia.remoteApi;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.GridLayout;
@@ -26,19 +25,21 @@ public class Main {
 	static int etest2 = 0;
 	static int etest3 = 0;
 	static int etest4 = 0;
-static boolean sensordata;
+	static boolean sensordata;
+
 	public static void main(String[] args) throws Throwable {
 
 		slider();
-		//sensor();
 
 	}
 
 	public static void gripperclose() {
 
 		System.out.println("Program started");
+		
 		remoteApi vrep = new remoteApi();
 		vrep.simxFinish(-1); // just in case, close all opened connections
+		
 		int clientID = vrep.simxStart("127.0.0.1", 19999, true, true, 5000, 5);
 		if (clientID != -1) {
 			System.out.println("Connected to remote API server");
@@ -50,11 +51,13 @@ static boolean sensordata;
 			int result = vrep.simxCallScriptFunction(clientID, "PhantomXPincher", vrep.sim_scripttype_childscript,
 					"gripperclose", null, null, inStrings, null, null, null, outStrings, null,
 					vrep.simx_opmode_blocking);
-			if (result == vrep.simx_return_ok)
+			
+			if (result == vrep.simx_return_ok)  {
 				System.out.format("Returned message: %s\n", outStrings.getArray()[0]); // display the reply from V-REP
-																						// (in this case, just a string)
-			else
+			}	// (in this case, just a string)
+			else {
 				System.out.format("Remote function call failed\n");
+			}
 
 		}
 	}
@@ -85,61 +88,62 @@ static boolean sensordata;
 	}
 
 	public static void sensor() {
-	
-	
 
-    	System.out.println("Program started");
-        remoteApi vrep = new remoteApi();    
-        vrep.simxFinish(-1);
-        int clientID = vrep.simxStart("127.0.0.1",19999,true,true,5000,5);
-        if (clientID!=-1)
-        {
-        	
-            System.out.println("Connected to remote API server");   
-            IntW sensor = new IntW(0);;
-		int ret = vrep.simxGetObjectHandle(clientID, "Proximity_sensor", sensor, vrep.simx_opmode_blocking);
-		BoolW detState = new BoolW(false);
-		FloatWA detectedPoint = new FloatWA(0);
-		IntW detectedObjectHandle = new IntW(1); 
-		FloatWA SurfaceNormalVector = new FloatWA(1);
-			//System.out.println(sensor.getValue());
-		// vrep.simxReadProximitySensor(clientID, sensor.getValue(), detState, detPoint, detectedObjectHandle, SurfaceNormalVector, vrep.simx_opmode_streaming);
-		  
-              ret=vrep.simxReadProximitySensor(clientID, sensor.getValue(), detState, detectedPoint, detectedObjectHandle, SurfaceNormalVector, vrep.simx_opmode_blocking); // Try to retrieve the streamed data
-              // After initialization of streaming, it will take a few ms before the first value arrives, so check the return code
-              //  System.out.format("Mouse position x: %d\n",mouseX.getValue()); // Mouse position x is actualized when the cursor is over V-REP's window
-            	 //System.out.println("is ok");
-              
-            	   
-              System.out.println("detected point coordinates: "+ Arrays.toString(detectedPoint.getArray()));
-              
-              sensordata = detState.getValue();
-              String s = String.valueOf(sensordata) ;
-              System.out.println("detection state = "+ s);
+		System.out.println("Program started");
+		remoteApi vrep = new remoteApi();
+		vrep.simxFinish(-1);
+		int clientID = vrep.simxStart("127.0.0.1", 19999, true, true, 5000, 5);
+		if (clientID != -1) {
 
-GridLayout gridLayout = new GridLayout(0,2);
+			System.out.println("Connected to remote API server");
+			IntW sensor = new IntW(0);
+			;
+			int ret = vrep.simxGetObjectHandle(clientID, "Proximity_sensor", sensor, vrep.simx_opmode_blocking);
+			BoolW detState = new BoolW(false);
+			FloatWA detectedPoint = new FloatWA(0);
+			IntW detectedObjectHandle = new IntW(1);
+			FloatWA SurfaceNormalVector = new FloatWA(1);
+			// System.out.println(sensor.getValue());
+			// vrep.simxReadProximitySensor(clientID, sensor.getValue(), detState, detPoint,
+			// detectedObjectHandle, SurfaceNormalVector, vrep.simx_opmode_streaming);
 
-              JDialog meinJDialog = new JDialog();
-  	        // Titel wird gesetzt
-  	        meinJDialog.setTitle("Sensormessung Proximity sensor ");
-  	        // Breite und Höhe des Fensters werden 
-  	        // auf 200 Pixel gesetzt
-  	        meinJDialog.setSize(945,50);
-  	        // Dialog wird auf modal gesetzt
-  	        meinJDialog.setModal(true);
-  	        // Wir lassen unseren Dialog anzeigen
-  	   JLabel lab1 =  new JLabel  ("detected point coordinates: "+ Arrays.toString(detectedPoint.getArray()));
-  	  JLabel lab2 = new JLabel("detection state = "+ s);
-  	
-  	        meinJDialog.add(lab1);
-  	        meinJDialog.add(lab2);
-  	        meinJDialog.setLayout(gridLayout);
-  	        meinJDialog.setVisible(true);
-  	      
-          }
-        vrep.simxFinish(clientID);
-      }
-	      
+			ret = vrep.simxReadProximitySensor(clientID, sensor.getValue(), detState, detectedPoint,
+					detectedObjectHandle, SurfaceNormalVector, vrep.simx_opmode_blocking); // Try to retrieve the
+																							// streamed data
+			// After initialization of streaming, it will take a few ms before the first
+			// value arrives, so check the return code
+			// System.out.format("Mouse position x: %d\n",mouseX.getValue()); // Mouse
+			// position x is actualized when the cursor is over V-REP's window
+			// System.out.println("is ok");
+
+			System.out.println("detected point coordinates: " + Arrays.toString(detectedPoint.getArray()));
+
+			sensordata = detState.getValue();
+			String s = String.valueOf(sensordata);
+			System.out.println("detection state = " + s);
+
+			GridLayout gridLayout = new GridLayout(0, 2);
+
+			JDialog meinJDialog = new JDialog();
+			// Titel wird gesetzt
+			meinJDialog.setTitle("Sensormessung Proximity sensor ");
+			// Breite und Höhe des Fensters werden
+			// auf 200 Pixel gesetzt
+			meinJDialog.setSize(945, 50);
+			// Dialog wird auf modal gesetzt
+			meinJDialog.setModal(true);
+			// Wir lassen unseren Dialog anzeigen
+			JLabel lab1 = new JLabel("detected point coordinates: " + Arrays.toString(detectedPoint.getArray()));
+			JLabel lab2 = new JLabel("detection state = " + s);
+
+			meinJDialog.add(lab1);
+			meinJDialog.add(lab2);
+			meinJDialog.setLayout(gridLayout);
+			meinJDialog.setVisible(true);
+
+		}
+		vrep.simxFinish(clientID);
+	}
 
 	public static void slider() {
 
@@ -335,28 +339,20 @@ GridLayout gridLayout = new GridLayout(0,2);
 		JButton Sensor = new JButton("Sensor prüfen");
 		Sensor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-			
-				
+
 				sensor();
-			    
+
 			}
 		});
-		
-		
-		
-	    
+
 		frame.add(panel);
 		panel.add(gripperopen);
 		frame.add(slider1);
 		frame.add(slider2);
 		frame.add(slider3);
 		frame.add(slider4);
-
-		
 		panel.add(gripperclose);
 		panel.add(Sensor);
-		
 		frame.pack();
 		frame.setVisible(true);
 
