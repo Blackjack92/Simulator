@@ -1,4 +1,20 @@
-package Simulator;
+package de.hfu.simulator;
+
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import coppelia.BoolW;
 import coppelia.FloatWA;
@@ -6,109 +22,47 @@ import coppelia.IntW;
 import coppelia.IntWA;
 import coppelia.StringWA;
 import coppelia.remoteApi;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import de.hfu.simulator.core.API;
+import de.hfu.simulator.devices.PhantomXPincher;
 
 public class Main {
-	
+
 	private final static Logger log = Logger.getLogger(Main.class.getName());
-	
-	
+
 	static int etest = 0;
 	static int etest2 = 0;
 	static int etest3 = 0;
 	static int etest4 = 0;
 	static boolean sensordata;
 
+	static API api;
+	static remoteApi vrep;
+	static int clientID;
+
+	static PhantomXPincher device;
+	
 	public static void main(String[] args) throws Throwable {
 
+		Config config = Config.getLocalhostConfig();
+		api = new API(config);
+		api.connect();
+		
+		device = new PhantomXPincher(api);
+		
+		vrep = api.getRemoteAPI();
+		clientID = api.getClientId();
+		
 		log.setLevel(Level.ALL);
 		log.log(Level.INFO, "Program starting...");
 		slider();
 		log.log(Level.INFO, "Program finished...");
 	}
-	
-	public static void gripperclose() {
-
-		remoteApi vrep = new remoteApi();
-		vrep.simxFinish(-1); // just in case, close all opened connections
-		Config config = Config.getLocalhostConfig();
-		int clientID = vrep.simxStart(config.getIp(), config.getPort(), true, true, 5000, 5);
-		if (clientID != -1) {
-			log.log(Level.INFO, "Connected to remote API server");
-
-			// 1. First send a command to display a specific message in a dialog box:
-			StringWA inStrings = new StringWA(1);
-			inStrings.getArray()[0] = "Hello world!";
-			StringWA outStrings = new StringWA(0);
-			int result = vrep.simxCallScriptFunction(clientID, "PhantomXPincher", vrep.sim_scripttype_childscript,
-					"gripperclose", null, null, inStrings, null, null, null, outStrings, null,
-					vrep.simx_opmode_blocking);
-			
-			if (result == vrep.simx_return_ok)  {
-				System.out.format("Returned message: %s\n", outStrings.getArray()[0]); // display the reply from V-REP
-			}	// (in this case, just a string)
-			else {
-				System.out.format("Remote function call failed\n");
-			}
-
-		} else {
-			log.log(Level.SEVERE, "No connection to remote server possible: " + config);
-		}
-	}
-
-	public static void gripperopen() {
-
-		System.out.println("Program started");
-		remoteApi vrep = new remoteApi();
-		vrep.simxFinish(-1); // just in case, close all opened connections
-		int clientID = vrep.simxStart("127.0.0.1", 19999, true, true, 5000, 5);
-		if (clientID != -1) {
-			System.out.println("Connected to remote API server");
-
-			// 1. First send a command to display a specific message in a dialog box:
-			StringWA inStrings = new StringWA(1);
-			inStrings.getArray()[0] = "Hello world!";
-			StringWA outStrings = new StringWA(0);
-			int result = vrep.simxCallScriptFunction(clientID, "PhantomXPincher", vrep.sim_scripttype_childscript,
-					"gripperopen", null, null, inStrings, null, null, null, outStrings, null,
-					vrep.simx_opmode_blocking);
-			if (result == vrep.simx_return_ok)
-				System.out.format("Returned message: %s\n", outStrings.getArray()[0]); // display the reply from V-REP
-																						// (in this case, just a string)
-			else
-				System.out.format("Remote function call failed\n");
-
-		}
-	}
 
 	public static void sensor() {
 
-		System.out.println("Program started");
-		remoteApi vrep = new remoteApi();
-		vrep.simxFinish(-1);
-		int clientID = vrep.simxStart("127.0.0.1", 19999, true, true, 5000, 5);
-		if (clientID != -1) {
-
 			System.out.println("Connected to remote API server");
 			IntW sensor = new IntW(0);
-			
+
 			int ret = vrep.simxGetObjectHandle(clientID, "Proximity_sensor", sensor, vrep.simx_opmode_blocking);
 			BoolW detState = new BoolW(false);
 			FloatWA detectedPoint = new FloatWA(0);
@@ -152,8 +106,6 @@ public class Main {
 			meinJDialog.setLayout(gridLayout);
 			meinJDialog.setVisible(true);
 
-		}
-		vrep.simxFinish(clientID);
 	}
 
 	public static void slider() {
@@ -169,15 +121,8 @@ public class Main {
 		JSlider slider1 = new JSlider(-180, 180, 0);
 		slider1.addChangeListener(new ChangeListener() {
 
-			@Override
 			public void stateChanged(ChangeEvent e) { // vel
 
-				System.out.println("Program started");
-				remoteApi vrep = new remoteApi();
-				vrep.simxFinish(-1); // just in case, close all opened connections
-				int clientID = vrep.simxStart("127.0.0.1", 19999, true, true, 5000, 5);
-				if (clientID != -1) {
-					System.out.println("Connected to remote API server");
 
 					// 1. First send a command to display a specific message in a dialog box:
 					// IntWA inInts=new IntWA(1);
@@ -203,22 +148,13 @@ public class Main {
 				}
 
 				// System.out.println( ((JSlider) e.getSource()).getValue() );
-			}
 		});
 
 		JSlider slider2 = new JSlider(-180, 180, 0);
 		;
 		slider2.addChangeListener(new ChangeListener() {
 
-			@Override
 			public void stateChanged(ChangeEvent e) { // vel
-
-				System.out.println("Program started");
-				remoteApi vrep = new remoteApi();
-				vrep.simxFinish(-1); // just in case, close all opened connections
-				int clientID = vrep.simxStart("127.0.0.1", 19999, true, true, 5000, 5);
-				if (clientID != -1) {
-					System.out.println("Connected to remote API server");
 
 					// 1. First send a command to display a specific message in a dialog box:
 					IntWA inInts = new IntWA(4);
@@ -243,8 +179,6 @@ public class Main {
 
 				}
 
-				// System.out.println( ((JSlider) e.getSource()).getValue() );
-			}
 		});
 
 		// frame.add( slider2 );
@@ -255,15 +189,7 @@ public class Main {
 		// slider3.setMajorTickSpacing( 10 );
 		slider3.addChangeListener(new ChangeListener() {
 
-			@Override
 			public void stateChanged(ChangeEvent e) {
-
-				System.out.println("Program started");
-				remoteApi vrep = new remoteApi();
-				vrep.simxFinish(-1); // just in case, close all opened connections
-				int clientID = vrep.simxStart("127.0.0.1", 19999, true, true, 5000, 5);
-				if (clientID != -1) {
-					System.out.println("Connected to remote API server");
 
 					// 1. First send a command to display a specific message in a dialog box:
 					IntWA inInts = new IntWA(4);
@@ -285,7 +211,6 @@ public class Main {
 					else
 						System.out.format("Remote function call failed\n");
 
-				}
 
 				// System.out.println( ((JSlider) e.getSource()).getValue() );
 			}
@@ -295,15 +220,7 @@ public class Main {
 
 		slider4.addChangeListener(new ChangeListener() {
 
-			@Override
 			public void stateChanged(ChangeEvent e) {
-
-				System.out.println("Program started");
-				remoteApi vrep = new remoteApi();
-				vrep.simxFinish(-1); // just in case, close all opened connections
-				int clientID = vrep.simxStart("127.0.0.1", 19999, true, true, 5000, 5);
-				if (clientID != -1) {
-					System.out.println("Connected to remote API server");
 
 					// 1. First send a command to display a specific message in a dialog box:
 					IntWA inInts = new IntWA(4);
@@ -325,25 +242,20 @@ public class Main {
 					else
 						System.out.format("Remote function call failed\n");
 
-				}
-
-				// System.out.println( ((JSlider) e.getSource()).getValue() );
 			}
 		});
 
 		JButton gripperopen = new JButton("Open Gripper");
 		gripperopen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				gripperopen();
+				device.openGripper();
 			}
 		});
 
 		JButton gripperclose = new JButton("Close Gripper");
 		gripperclose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				gripperclose();
+				device.closeGripper();
 			}
 		});
 
