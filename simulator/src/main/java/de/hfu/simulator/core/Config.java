@@ -1,4 +1,4 @@
-package de.hfu.simulator;
+package de.hfu.simulator.core;
 
 public class Config {
 
