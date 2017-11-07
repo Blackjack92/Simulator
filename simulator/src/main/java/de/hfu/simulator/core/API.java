@@ -43,13 +43,11 @@ public class API {
 
 	public boolean simxCallScriptFunction(Device device, String command) {
 		
-		// In and out strings are necessary for the example script
-		StringWA inStrings = new StringWA(1);
-		inStrings.getArray()[0] = "Hello world!";
+		
 		StringWA outStrings = new StringWA(0);
 		
 		int returnCode = api.simxCallScriptFunction(clientId, device.getName(), remoteApi.sim_scripttype_childscript,
-				command, null, null, inStrings, null, null, null, outStrings, null, remoteApi.simx_opmode_blocking);
+				command, null, null, null, null, null, null, outStrings, null, remoteApi.simx_opmode_blocking);
 		return returnCode == remoteApi.simx_return_ok;
 	}
 
