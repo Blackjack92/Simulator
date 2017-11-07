@@ -28,7 +28,6 @@ public class PhantomXPincher extends Device {
 	
 	public ProximityResult getProximityResult() {
 		ProximityResult result = new ProximityResult();
-		api.simxGetObjectHandle(this, "Proximity_sensor");
 		api.simxReadProximitySensor(this, result);
 		return result;
 	}

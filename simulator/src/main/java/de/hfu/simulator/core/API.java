@@ -67,36 +67,28 @@ public class API {
 		return returnCode == remoteApi.simx_return_ok;
 	}
 	
-	public boolean simxGetObjectHandle(Device device, String object) {
-		IntW sensor = new IntW(0);
-		int returnCode = api.simxGetObjectHandle(clientId, object, sensor, remoteApi.simx_opmode_blocking);
-		return returnCode == remoteApi.simx_return_ok;
-	}
-	
 	public boolean simxReadProximitySensor(Device device, ProximityResult result) {
 		
 		// TODO: decide how to return the proximity sensor results
 		// e.g. via return value or a input argument wrapper object 
 		IntW sensor = new IntW(0);
+		
+		int returnCode = api.simxGetObjectHandle(clientId, "Proximity_sensor", sensor, remoteApi.simx_opmode_blocking);
+		if (returnCode != remoteApi.simx_return_ok) {
+			return false;
+		}
+		
 		BoolW detState = new BoolW(false);
 		FloatWA detectedPoint = new FloatWA(0);
 		IntW detectedObjectHandle = new IntW(1);
 		FloatWA SurfaceNormalVector = new FloatWA(1);
 		
-		int returnCode = api.simxReadProximitySensor(clientId, sensor.getValue(), detState, detectedPoint,
+		returnCode = api.simxReadProximitySensor(clientId, sensor.getValue(), detState, detectedPoint,
 				detectedObjectHandle, SurfaceNormalVector, remoteApi.simx_opmode_blocking);
 		
 		result.setObjectDetected(detState.getValue());
 		result.setPoint(Arrays.toString(detectedPoint.getArray()));
 		
 		return returnCode == remoteApi.simx_return_ok;
-	}
-	
-	public remoteApi getRemoteAPI() {
-		return api;
-	}
-
-	public int getClientId() {
-		return clientId;
 	}
 }
