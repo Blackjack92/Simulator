@@ -51,6 +51,7 @@ public class API {
 		return returnCode == remoteApi.simx_return_ok;
 	}
 
+	
 	public boolean simxCallScriptFunction(Device device, String command, int[] input) {
 		IntWA inInts = new IntWA(input.length);
 		for (int i = 0; i < input.length; i++) {
@@ -71,7 +72,7 @@ public class API {
 		// e.g. via return value or a input argument wrapper object 
 		IntW sensor = new IntW(0);
 		
-		int returnCode = api.simxGetObjectHandle(clientId, "Proximity_sensor", sensor, remoteApi.simx_opmode_blocking);
+		int returnCode = api.simxGetObjectHandle(clientId, device.getName()+"Proximity_sensor", sensor, remoteApi.simx_opmode_blocking);
 		if (returnCode != remoteApi.simx_return_ok) {
 			return false;
 		}
