@@ -47,7 +47,7 @@ public class API {
 		StringWA outStrings = new StringWA(0);
 		
 		int returnCode = api.simxCallScriptFunction(clientId, device.getName(), remoteApi.sim_scripttype_childscript,
-				command, null, null, null, null, null, null, outStrings, null, remoteApi.simx_opmode_blocking);
+				command, null, null, null, null, null, null, outStrings, null, remoteApi.simx_opmode_oneshot);
 		return returnCode == remoteApi.simx_return_ok;
 	}
 
@@ -61,15 +61,25 @@ public class API {
 		StringWA outStrings = new StringWA(0);
 		int returnCode = api.simxCallScriptFunction(clientId, device.getName(),
 				remoteApi.sim_scripttype_childscript, command, inInts, null, null, null, null, null,
-				outStrings, null, remoteApi.simx_opmode_blocking);
+				outStrings, null, remoteApi.simx_opmode_oneshot);
+		
+		return returnCode == remoteApi.simx_return_ok;
+	}
+	
+	public boolean simxCallScriptFunction(Device device, String command, String input) {
+		 StringWA inStrings=new StringWA(1);
+		 inStrings.getArray()[0] = input;
+		 
+		StringWA outStrings = new StringWA(0);
+		int returnCode = api.simxCallScriptFunction(clientId, device.getName(),
+				remoteApi.sim_scripttype_childscript, command, null, null, inStrings, null, null, null,
+				outStrings, null, remoteApi.simx_opmode_oneshot);
 		
 		return returnCode == remoteApi.simx_return_ok;
 	}
 	
 	public boolean simxReadProximitySensor(Device device, ProximityResult result) {
-		
-		// TODO: decide how to return the proximity sensor results
-		// e.g. via return value or a input argument wrapper object 
+		 
 		IntW sensor = new IntW(0);
 		
 		int returnCode = api.simxGetObjectHandle(clientId, device.getName()+"Proximity_sensor", sensor, remoteApi.simx_opmode_blocking);
@@ -89,5 +99,12 @@ public class API {
 		result.setPoint(Arrays.toString(detectedPoint.getArray()));
 		
 		return returnCode == remoteApi.simx_return_ok;
+	}
+	public boolean simxSetIntegerSignal(String signalname, Integer value) {
+		
+		int returnCode = api.simxSetIntegerSignal(clientId, signalname, value, remoteApi.simx_opmode_oneshot);
+		
+		return returnCode == remoteApi.simx_return_ok;
+		
 	}
 }
