@@ -25,11 +25,9 @@ public class MyRobot extends Device{
 		return name;
 	}
 	public boolean startSignal() {
-		return api.simxSetIntegerSignal( "StartSignal", 1);
+		return api.simxSetIntegerSignal("StartSignal", 1);
 	}
-	public boolean placeCuboid() {
-		return api.simxCallScriptFunction(this, "Placecuboid");
-	}
+	
 	public boolean openGripper() {
 		return api.simxCallScriptFunction(this, "gripperopen");
 	}

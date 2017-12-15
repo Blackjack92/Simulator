@@ -18,7 +18,6 @@ public class Main {
 
 		log.setLevel(Level.ALL);
 		log.log(Level.INFO, "Program starting...");
-
 		Config config = Config.getLocalhostConfig();
 		log.log(Level.INFO, "Acquired configuration...");
 		API api = new API(config);

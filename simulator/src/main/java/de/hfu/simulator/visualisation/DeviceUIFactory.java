@@ -196,7 +196,7 @@ public class DeviceUIFactory {
 		startSignal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				boolean result = deviceM.startSignal();
-				log.log(Level.INFO, "Gripper closed: " + result);
+				log.log(Level.INFO, "Signal send: " + result);
 			}
 		});
 		
