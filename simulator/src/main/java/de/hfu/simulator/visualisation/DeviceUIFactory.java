@@ -3,6 +3,7 @@ package de.hfu.simulator.visualisation;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -39,6 +41,8 @@ public class DeviceUIFactory {
 
 	public JFrame createPhantomXPincherUI(final PhantomXPincher device) {
 
+		
+		
 		JPanel panel = new JPanel();
 		panel.setSize(400, 200);
 		panel.setVisible(true);
@@ -112,6 +116,7 @@ public class DeviceUIFactory {
 		});
 		frame.setTitle(device.getName());
 		frame.add(panel);
+		
 		panel.add(gripperopen);
 		frame.add(slider1);
 		frame.add(slider2);
@@ -146,6 +151,7 @@ public class DeviceUIFactory {
 	}
 
 	public JFrame createMyRobotUI(final MyRobot deviceM) {
+	
 		JPanel panel = new JPanel();
 		panel.setSize(400, 200);
 		panel.setVisible(true);
@@ -192,13 +198,7 @@ public class DeviceUIFactory {
 		});
 
 
-		JButton startSignal = new JButton("Start Signal");
-		startSignal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				boolean result = deviceM.startSignal();
-				log.log(Level.INFO, "Signal send: " + result);
-			}
-		});
+		
 		
 		  JButton Sensor = new JButton("Sensor prüfen"); Sensor.addActionListener(new
 		  ActionListener() { public void actionPerformed(ActionEvent e) {
@@ -211,7 +211,7 @@ public class DeviceUIFactory {
 		frame.add(slider2);
 		panel.add(gripperclose);
 		panel.add(Sensor);
-		panel.add(startSignal);
+		
 		frame.pack();
 		
 		return frame;
@@ -331,6 +331,7 @@ public class DeviceUIFactory {
 		frame.setTitle(deviceJ.getName());
 		frame.add(panel);
 		panel.add(gripperopen);
+		
 		frame.add(slider1);
 		frame.add(slider2);
 		frame.add(slider3);

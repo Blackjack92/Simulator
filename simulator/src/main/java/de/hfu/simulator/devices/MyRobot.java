@@ -6,7 +6,6 @@ import de.hfu.simulator.core.ProximityResult;
 public class MyRobot extends Device{
 
 	private int[] sliderValues;
-	private String command;
 	private String name;
 	
 	public MyRobot(API api) {
@@ -24,9 +23,8 @@ public class MyRobot extends Device{
 	public String getName() {
 		return name;
 	}
-	public boolean startSignal() {
-		return api.simxSetIntegerSignal("StartSignal", 1);
-	}
+	
+	
 	
 	public boolean openGripper() {
 		return api.simxCallScriptFunction(this, "gripperopen");
@@ -36,8 +34,7 @@ public class MyRobot extends Device{
 		return api.simxCallScriptFunction(this, "gripperclose");
 	}
 	
-	public boolean executeCode(String value) {
-		command = value ;
+	public boolean executeCode(String command) {
 		return api.simxCallScriptFunction(this, "executeCode_function", command);
 	}
 	public ProximityResult getProximityResult() {
