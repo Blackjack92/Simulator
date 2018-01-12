@@ -3,21 +3,19 @@ package de.hfu.simulator.visualisation;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.PrintStream;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import de.hfu.simulator.core.ProximityResult;
+import de.hfu.simulator.devices.CircularConveyorBelt1;
+import de.hfu.simulator.devices.CircularConveyorBelt2;
 import de.hfu.simulator.devices.Jaco;
 import de.hfu.simulator.devices.PhantomXPincher;
 import de.hfu.simulator.devices.MyRobot;
@@ -39,7 +37,7 @@ public class DeviceUIFactory {
 		return instance;
 	}
 
-	public JFrame createPhantomXPincherUI(final PhantomXPincher device) {
+	public JPanel createPhantomXPincherUI(final PhantomXPincher device) {
 
 		
 		
@@ -47,9 +45,7 @@ public class DeviceUIFactory {
 		panel.setSize(400, 200);
 		panel.setVisible(true);
 
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new GridLayout(4, 0, 0, 7));
+		
 
 		JSlider slider1 = new JSlider(-180, 180, 0);
 		slider1.addChangeListener(new ChangeListener() {
@@ -114,19 +110,18 @@ public class DeviceUIFactory {
 				sensor(device);
 			}
 		});
-		frame.setTitle(device.getName());
-		frame.add(panel);
+		
 		
 		panel.add(gripperopen);
-		frame.add(slider1);
-		frame.add(slider2);
-		frame.add(slider3);
-		frame.add(slider4);
+		panel.add(slider1);
+		panel.add(slider2);
+		panel.add(slider3);
+		panel.add(slider4);
 		panel.add(gripperclose);
 		panel.add(Sensor);
-		frame.pack();
+		
 
-		return frame;
+		return panel;
 	}
 
 	private void sensor(PhantomXPincher device) {
@@ -150,15 +145,13 @@ public class DeviceUIFactory {
 
 	}
 
-	public JFrame createMyRobotUI(final MyRobot deviceM) {
+	public JPanel createMyRobotUI(final MyRobot deviceM) {
 	
 		JPanel panel = new JPanel();
 		panel.setSize(400, 200);
 		panel.setVisible(true);
 
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new GridLayout(4, 0, 0, 7));
+		 
 
 		JSlider slider1 = new JSlider(-180, 180, 0);
 		slider1.addChangeListener(new ChangeListener() {
@@ -204,17 +197,17 @@ public class DeviceUIFactory {
 		  ActionListener() { public void actionPerformed(ActionEvent e) {
 		  sensor(deviceM); } });
 		 
-		frame.setTitle(deviceM.getName());
-		frame.add(panel);
+		
 		panel.add(gripperopen);
-		frame.add(slider1);
-		frame.add(slider2);
 		panel.add(gripperclose);
 		panel.add(Sensor);
+		panel.add(slider1);
+		panel.add(slider2);	
 		
-		frame.pack();
 		
-		return frame;
+		
+		
+		return panel;
 	}
 	private void sensor(MyRobot deviceM) {
 
@@ -236,15 +229,89 @@ public class DeviceUIFactory {
 		meinJDialog.setVisible(true);
 
 	}
-	public JFrame createJacoUI(final Jaco deviceJ) {
+	
+	public JPanel createCircularConveyorBeltUI(final CircularConveyorBelt1 deviceC) {
+		
+		JPanel panel = new JPanel();
+		panel.setSize(400, 200);
+		panel.setVisible(true);
+
+		 
+
+		JButton stop = new JButton("Stop");
+		stop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean result = deviceC.Stop1();
+				log.log(Level.INFO, "belt stoped: " + result);
+			}
+		});
+		
+		JButton run = new JButton("Run");
+		run.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean result = deviceC.Run1();
+				log.log(Level.INFO, "belt is running: " + result);
+			}
+		});
+
+
+		
+		 
+		
+		panel.add(stop);
+		panel.add(run);
+		
+		
+		
+		
+		
+		return panel;
+	}
+	
+public JPanel createCircularConveyorBeltUI2(final CircularConveyorBelt2 deviceC2) {
+		
+		JPanel panel = new JPanel();
+		panel.setSize(400, 200);
+		panel.setVisible(true);
+
+		 
+
+		JButton stop = new JButton("Stop");
+		stop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean result = deviceC2.Stop2();
+				log.log(Level.INFO, "belt stoped: " + result);
+			}
+		});
+		
+		JButton run = new JButton("Run");
+		run.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean result = deviceC2.Run2();
+				log.log(Level.INFO, "belt is running: " + result);
+			}
+		});
+
+
+		
+		 
+		
+		panel.add(stop);
+		panel.add(run);
+		
+		
+		
+		
+		
+		return panel;
+	}
+	public JPanel createJacoUI(final Jaco deviceJ) {
 
 		JPanel panel = new JPanel();
 		panel.setSize(400, 200);
 		panel.setVisible(true);
 
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new GridLayout(4, 0, 0, 7));
+		
 
 		JSlider slider1 = new JSlider(-180, 180, 0);
 		slider1.addChangeListener(new ChangeListener() {
@@ -328,21 +395,20 @@ public class DeviceUIFactory {
 				sensor(deviceJ);
 			}
 		});
-		frame.setTitle(deviceJ.getName());
-		frame.add(panel);
+		
 		panel.add(gripperopen);
 		
-		frame.add(slider1);
-		frame.add(slider2);
-		frame.add(slider3);
-		frame.add(slider4);
-		frame.add(slider5);
-		frame.add(slider6);
+		panel.add(slider1);
+		panel.add(slider2);
+		panel.add(slider3);
+		panel.add(slider4);
+		panel.add(slider5);
+		panel.add(slider6);
 		panel.add(gripperclose);
 		panel.add(Sensor);
-		frame.pack();
+		
 
-		return frame;
+		return panel;
 	}
 	
 	private void sensor(Jaco device) {

@@ -107,4 +107,13 @@ public class API {
 		return returnCode == remoteApi.simx_return_ok;
 		
 	}
+
+
+public boolean simxSetFloatSignal(String signalname, Float value) {
+	
+	int returnCode = api.simxSetFloatSignal(clientId, signalname, value, remoteApi.simx_opmode_oneshot);
+	
+	return returnCode == remoteApi.simx_return_ok;
+	
+}
 }
