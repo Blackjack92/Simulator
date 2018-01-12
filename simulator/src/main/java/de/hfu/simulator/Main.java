@@ -42,6 +42,7 @@ public class Main {
 		frame.setSize(1000, 1000);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridLayout(4, 0, 0, 7));
+		frame.setTitle("Industry 4.0 simulator");
 		//Tabbed Pane for devices
 		JTabbedPane tabpane = new JTabbedPane
 	            (JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT );
@@ -62,7 +63,7 @@ public class Main {
 		//Panel for myRobot
 		MyRobot deviceM = new MyRobot(api);
 		JPanel deviceMUI = DeviceUIFactory.getInstance().createMyRobotUI(deviceM);
-		frame.setTitle(deviceM.getName());
+		
 		
 		tabpane.addTab("MyRobot", deviceMUI);
 		
